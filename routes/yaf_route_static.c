@@ -111,6 +111,10 @@ int yaf_route_pathinfo_route(yaf_request_t *request, zend_string *req_uri) /* {{
 			} while (0);
 		}
 
+		if (action == NULL) {
+			break;
+		}
+
 		if (module && controller == NULL) {
 			controller = module;
 			module = NULL;
