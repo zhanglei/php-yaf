@@ -5,7 +5,6 @@ Check for yaf.system settings
 --INI--
 yaf.library="/tmp"
 yaf.use_spl_autoload=1
-yaf.cache_config=0
 yaf.name_suffix=1
 yaf.name_separator=""
 yaf.lowcase_path=1
@@ -36,4 +35,5 @@ bool(true)
 
 Warning: Yaf_Loader::autoload(): Failed opening script %sapplcation%cplugins%cABC%cEFG.php: No such file or directory in %s043.php on line %d
 
-Fatal error: Class 'Plugin__ABC_EFG' not found in %s043.php on line %d
+Fatal error: Uncaught Error: Class 'Plugin__ABC_EFG' not found in %s043.php:%d
+%a

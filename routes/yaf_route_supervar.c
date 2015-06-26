@@ -154,13 +154,11 @@ zend_string * yaf_route_supervar_assemble(yaf_route_t *this_ptr, zval *info, zva
 PHP_METHOD(yaf_route_supervar, __construct) {
     zval *var;
 
-    if (zend_parse_parameters(ZEND_NUM_ARGS(), "z", &var) ==   FAILURE) {
-        YAF_UNINITIALIZED_OBJECT(getThis());
+    if (zend_parse_parameters_throw(ZEND_NUM_ARGS(), "z", &var) ==   FAILURE) {
         return;
     }
 
     if (Z_TYPE_P(var) != IS_STRING || !Z_STRLEN_P(var)) {
-        YAF_UNINITIALIZED_OBJECT(getThis());
         yaf_trigger_error(YAF_ERR_TYPE_ERROR, "Expects a valid string super var name", yaf_route_supervar_ce->name);
         RETURN_FALSE;
     }
@@ -202,7 +200,7 @@ zend_function_entry yaf_route_supervar_methods[] = {
 YAF_STARTUP_FUNCTION(route_supervar) {
 	zend_class_entry ce;
 	YAF_INIT_CLASS_ENTRY(ce, "Yaf_Route_Supervar", "Yaf\\Route\\Supervar", yaf_route_supervar_methods);
-	yaf_route_supervar_ce = zend_register_internal_class_ex(&ce, NULL);
+	yaf_route_supervar_ce = zend_register_internal_class(&ce);
 	zend_class_implements(yaf_route_supervar_ce, 1, yaf_route_ce);
 	yaf_route_supervar_ce->ce_flags |= ZEND_ACC_FINAL;
 

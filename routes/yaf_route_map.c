@@ -242,9 +242,8 @@ PHP_METHOD(yaf_route_map, __construct) {
 	zend_bool controller_prefer = 0;
 	zval rself, *self = getThis();
 
-	if (zend_parse_parameters(ZEND_NUM_ARGS(), "|bs",
+	if (zend_parse_parameters_throw(ZEND_NUM_ARGS(), "|bs",
 			   	&controller_prefer, &delim, &delim_len) == FAILURE) {
-		YAF_UNINITIALIZED_OBJECT(getThis());
 		return;
 	}
 
@@ -289,7 +288,7 @@ YAF_STARTUP_FUNCTION(route_map) {
 	zend_class_entry ce;
 
 	YAF_INIT_CLASS_ENTRY(ce, "Yaf_Route_Map", "Yaf\\Route\\Map", yaf_route_map_methods);
-	yaf_route_map_ce = zend_register_internal_class_ex(&ce, NULL);
+	yaf_route_map_ce = zend_register_internal_class(&ce);
 	zend_class_implements(yaf_route_map_ce, 1, yaf_route_ce);
 
 	yaf_route_map_ce->ce_flags |= ZEND_ACC_FINAL;
