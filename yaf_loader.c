@@ -228,12 +228,12 @@ yaf_loader_t *yaf_loader_instance(yaf_loader_t *this_ptr, zend_string *library_p
         object_init_ex(this_ptr, yaf_loader_ce);
 	} 
 
-	if (library_path && global_path) {
+	if (library_path->len && global_path->len) {
 		zend_update_property_str(yaf_loader_ce,
 				this_ptr, ZEND_STRL(YAF_LOADER_PROPERTY_NAME_LIBRARY), library_path);
 		zend_update_property_str(yaf_loader_ce,
 				this_ptr, ZEND_STRL(YAF_LOADER_PROPERTY_NAME_GLOBAL_LIB), global_path);
-	} else if (!global_path) {
+	} else if (!global_path->len) {
 		zend_update_property_str(yaf_loader_ce,
 				this_ptr, ZEND_STRL(YAF_LOADER_PROPERTY_NAME_LIBRARY), library_path);
 		zend_update_property_str(yaf_loader_ce,
