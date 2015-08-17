@@ -149,10 +149,8 @@ zend_string * yaf_route_simple_assemble(yaf_route_t *this_ptr, zval *info, zval 
 
 		if (query && IS_ARRAY == Z_TYPE_P(query)) {
 			zend_string *key;
-			ulong key_idx;
 
-            ZEND_HASH_FOREACH_KEY_VAL(Z_ARRVAL_P(query), key_idx, key, tmp) {
-
+            ZEND_HASH_FOREACH_STR_KEY_VAL(Z_ARRVAL_P(query), key, tmp) {
 				if (IS_STRING == Z_TYPE_P(tmp) && key) {
 					smart_str_appendc(&tvalue, '&');
 					smart_str_appendl(&tvalue, ZSTR_VAL(key), ZSTR_LEN(key));
@@ -182,7 +180,7 @@ PHP_METHOD(yaf_route_simple, __construct) {
 	if (IS_STRING != Z_TYPE_P(module)
 			|| IS_STRING != Z_TYPE_P(controller)
 			|| IS_STRING != Z_TYPE_P(action)) {
-		yaf_trigger_error(YAF_ERR_TYPE_ERROR, "Expect 3 string parameters", yaf_route_simple_ce->name);
+		yaf_trigger_error(YAF_ERR_TYPE_ERROR, "Expect 3 string parameters");
 		RETURN_FALSE;
 	} else {
 	    zval rself, *self = getThis();

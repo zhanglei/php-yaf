@@ -21,6 +21,7 @@
 #include "php.h"
 #include "main/SAPI.h" /* for sapi_module */
 #include "Zend/zend_interfaces.h" /* for zend_call_method_with_* */
+#include "Zend/zend_exceptions.h" /* for zend_exception_get_default */
 
 #include "php_yaf.h"
 #include "yaf_namespace.h"
@@ -411,8 +412,8 @@ zend_class_entry *yaf_dispatcher_get_action(zend_string *app_dir, yaf_controller
 				efree(action_path);
 			}
 		} else {
-			yaf_trigger_error(YAF_ERR_NOTFOUND_ACTION, "There is no method %s%s in %s::$%s",
-					action, "Action", Z_OBJCE_P(controller)->name, YAF_CONTROLLER_PROPERTY_NAME_ACTIONS);
+			yaf_trigger_error(YAF_ERR_NOTFOUND_ACTION, "There is no method %s%s in %s::$%s", ZSTR_VAL(action),
+					"Action", ZSTR_VAL(Z_OBJCE_P(controller)->name), YAF_CONTROLLER_PROPERTY_NAME_ACTIONS);
 		}
 	} else
 /* {{{ This only effects internally */
@@ -471,7 +472,7 @@ zend_class_entry *yaf_dispatcher_get_action(zend_string *app_dir, yaf_controller
 				efree(directory);
 				return NULL;
 			} else if (!instanceof_function(ce, yaf_action_ce)) {
-				yaf_trigger_error(YAF_ERR_TYPE_ERROR, "Action must be an instance of %s", yaf_action_ce->name);
+				yaf_trigger_error(YAF_ERR_TYPE_ERROR, "Action must be an instance of %s", ZSTR_VAL(yaf_action_ce->name));
 
 				efree(class);
 				efree(action_upper);
@@ -491,7 +492,7 @@ zend_class_entry *yaf_dispatcher_get_action(zend_string *app_dir, yaf_controller
 /* }}} */
 	{
 		yaf_trigger_error(YAF_ERR_NOTFOUND_ACTION,
-				"There is no method %s%s in %s", action, "Action", Z_OBJCE_P(controller)->name);
+				"There is no method %s%s in %s", ZSTR_VAL(action), "Action", ZSTR_VAL(Z_OBJCE_P(controller)->name));
 	}
 
 	return NULL;
@@ -508,7 +509,7 @@ int yaf_dispatcher_handle(yaf_dispatcher_t *dispatcher, yaf_request_t *request, 
 	if (!app_dir) {
 		yaf_trigger_error(YAF_ERR_STARTUP_FAILED,
 				"%s requires %s(which set the application.directory) to be initialized first",
-				yaf_dispatcher_ce->name, yaf_application_ce->name);
+				ZSTR_VAL(yaf_dispatcher_ce->name), ZSTR_VAL(yaf_application_ce->name));
 		return 0;
 	} else {
 		int	is_def_module = 0;
@@ -782,7 +783,7 @@ void yaf_dispatcher_exception_handler(yaf_dispatcher_t *dispatcher, yaf_request_
 
 	if (!yaf_dispatcher_handle(dispatcher, request, response, view)) {
 		if (EG(exception) &&
-			instanceof_function(EG(exception->ce),
+			instanceof_function(EG(exception)->ce,
 				yaf_buildin_exceptions[YAF_EXCEPTION_OFFSET(YAF_ERR_NOTFOUND_CONTROLLER)])) {
 			zval *m = zend_read_property(yaf_dispatcher_ce,
 					dispatcher, ZEND_STRL(YAF_DISPATCHER_PROPERTY_NAME_MODULE), 1, NULL);
@@ -836,7 +837,7 @@ yaf_response_t *yaf_dispatcher_dispatch(yaf_dispatcher_t *dispatcher, zval *resp
 			dispatcher, ZEND_STRL(YAF_DISPATCHER_PROPERTY_NAME_PLUGINS), 1, NULL);
 
 	if (UNEXPECTED(IS_OBJECT != Z_TYPE_P(request))) {
-		yaf_trigger_error(YAF_ERR_TYPE_ERROR, "Expect a %s instance", yaf_request_ce->name);
+		yaf_trigger_error(YAF_ERR_TYPE_ERROR, "Expect a %s instance", ZSTR_VAL(yaf_request_ce->name));
 		zval_ptr_dtor(response);
 		return NULL;
 	}
@@ -894,7 +895,9 @@ yaf_response_t *yaf_dispatcher_dispatch(yaf_dispatcher_t *dispatcher, zval *resp
 			dispatcher, ZEND_STRL(YAF_DISPATCHER_PROPERTY_NAME_RETURN), 1, NULL);
 
 	if (Z_TYPE_P(return_response) == IS_FALSE) {
-		(void)yaf_response_send(response);
+		zval ret;
+		/* it must return bool */
+		zend_call_method_with_0_params(response, Z_OBJCE_P(response), NULL, "response", &ret);
 		yaf_response_clear_body(response, NULL);
 	}
 

@@ -170,12 +170,10 @@ zend_string * yaf_route_regex_assemble(yaf_route_t *this_ptr, zval *info, zval *
 
 	if (query && IS_ARRAY == Z_TYPE_P(query)) {
 		zend_string *key;
-		ulong key_idx;
 		HashTable *ht = Z_ARRVAL_P(query);
 
 		smart_str_appendc(&squery, '?');
-		ZEND_HASH_FOREACH_KEY_VAL(ht, key_idx, key, tmp) {
-
+		ZEND_HASH_FOREACH_STR_KEY_VAL(ht, key, tmp) {
 			if (key) {
 				if (IS_STRING == Z_TYPE_P(tmp)) {
 					smart_str_appendl(&squery, ZSTR_VAL(key), ZSTR_LEN(key));
@@ -307,12 +305,12 @@ PHP_METHOD(yaf_route_regex, __construct) {
 	}
 
 	if (IS_STRING != Z_TYPE_P(match) || !Z_STRLEN_P(match)) {
-		yaf_trigger_error(YAF_ERR_TYPE_ERROR, "Expects a valid string as the first parameter", yaf_route_regex_ce->name);
+		yaf_trigger_error(YAF_ERR_TYPE_ERROR, "Expects a valid string as the first parameter");
 		RETURN_FALSE;
 	}
 
 	if (verify && IS_ARRAY != Z_TYPE_P(verify)) {
-		yaf_trigger_error(YAF_ERR_TYPE_ERROR, "Expects an array as third parameter",  yaf_route_regex_ce->name);
+		yaf_trigger_error(YAF_ERR_TYPE_ERROR, "Expects an array as third parameter");
 		RETURN_FALSE;
 	}
 
