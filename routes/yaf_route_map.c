@@ -14,7 +14,6 @@
   +----------------------------------------------------------------------+
 */
 
-/* $Id: map.c 329197 2013-01-18 05:55:37Z laruence $*/
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -108,6 +107,8 @@ int yaf_route_map_route(yaf_route_t *route, yaf_request_t *request TSRMLS_DC) {
 			} else {
 				query_str = NULL;
 			}
+		} else {
+			query_str = NULL;
 		}
 	}
 
