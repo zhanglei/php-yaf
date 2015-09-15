@@ -317,10 +317,24 @@ zend_class_entry * yaf_dispatcher_get_controller(char *app_dir, char *module, ch
 		int class_len		= 0;
 		zend_class_entry **ce 	= NULL;
 
+		/**
 		if (YAF_G(name_suffix)) {
 			class_len = spprintf(&class, 0, "%s%s%s", controller, YAF_G(name_separator), "Controller");
 		} else {
 			class_len = spprintf(&class, 0, "%s%s%s", "Controller", YAF_G(name_separator), controller);
+		}*/
+		if (YAF_G(name_suffix)) {
+			if (def_module){
+				class_len = spprintf(&class, 0, "%s%s%s", controller, YAF_G(name_separator), "Controller");
+			}else{
+				class_len = spprintf(&class, 0, "%s%s%s%s%s", module, "_", controller, YAF_G(name_separator), "Controller");
+			}
+		} else {
+			if (def_module){
+				class_len = spprintf(&class, 0, "%s%s%s", "Controller", YAF_G(name_separator), controller);
+			}else{
+				class_len = spprintf(&class, 0, "%s%s%s%s%s", module, "_", "Controller", YAF_G(name_separator), controller);
+			}
 		}
 
 		class_lowercase = zend_str_tolower_dup(class, class_len);

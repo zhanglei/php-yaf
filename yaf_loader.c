@@ -181,6 +181,40 @@ static int yaf_loader_is_category(char *class, uint class_len, char *category, u
 }
 /* }}} */
 
+/** {{{ static void yaf_loader_category_withmodule(char *class, uint file_name_len, char *directory, char *category TSRMLS_DC)
+ */
+static void yaf_loader_category_withmodule(char ** file_name, uint file_name_len, char **directory, char *class_name, char *category TSRMLS_DC) {
+	char *q, *p, *seg, *temp_classname = NULL, *app_directory;
+	uint seg_len = 0 ,separator_len = 0;
+	separator_len = YAF_G(name_separator_len);
+	app_directory = YAF_G(directory);
+
+	p = class_name;
+	temp_classname = estrdup(class_name);
+	q = p;
+
+	while (1) {
+		while(++q && *q != '_' && *q != '\0');
+
+		if (*q != '\0') {
+			seg_len	= q - p;
+			seg	 	= estrndup(p, seg_len);
+			temp_classname = estrdup(class_name + seg_len + 1);
+		}
+		break;
+	}
+	if(seg_len && (yaf_application_is_module_name(seg, seg_len TSRMLS_CC))){
+		spprintf(directory, 0, "%s%c%s%c%s%c%s", app_directory, DEFAULT_SLASH,
+			YAF_MODULE_DIRECTORY_NAME, DEFAULT_SLASH, seg, DEFAULT_SLASH, category);
+		if (YAF_G(name_suffix)) {
+			*file_name = estrndup(temp_classname, (file_name_len - seg_len - 1));
+		} else {
+			*file_name = estrdup(temp_classname + seg_len  + separator_len + 1);
+		}
+	}
+}
+/* }}} */
+
 /** {{{ int yaf_loader_is_local_namespace(yaf_loader_t *loader, char *class_name, int len TSRMLS_DC)
  */
 int yaf_loader_is_local_namespace(yaf_loader_t *loader, char *class_name, int len TSRMLS_DC) {
@@ -746,7 +780,7 @@ PHP_METHOD(yaf_loader, autoload) {
 			} else {
 				file_name = estrdup(class_name + YAF_LOADER_LEN_MODEL + separator_len);
 			}
-
+			yaf_loader_category_withmodule(&file_name, file_name_len, &directory, class_name, YAF_MODEL_DIRECTORY_NAME TSRMLS_CC);
 			break;
 		}
 
@@ -760,7 +794,7 @@ PHP_METHOD(yaf_loader, autoload) {
 			} else {
 				file_name = estrdup(class_name + YAF_LOADER_LEN_PLUGIN + separator_len);
 			}
-
+			yaf_loader_category_withmodule(&file_name, file_name_len, &directory, class_name, YAF_PLUGIN_DIRECTORY_NAME TSRMLS_CC);
 			break;
 		}
 
@@ -774,7 +808,7 @@ PHP_METHOD(yaf_loader, autoload) {
 			} else {
 				file_name = estrdup(class_name + YAF_LOADER_LEN_CONTROLLER + separator_len);
 			}
-
+			yaf_loader_category_withmodule(&file_name, file_name_len, &directory, class_name, YAF_CONTROLLER_DIRECTORY_NAME TSRMLS_CC);
 			break;
 		}
 
