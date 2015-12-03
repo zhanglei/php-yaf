@@ -39,7 +39,7 @@ extern zend_module_entry yaf_module_entry;
 #define YAF_G(v) (yaf_globals.v)
 #endif
 
-#define PHP_YAF_VERSION 					"3.0.0-dev"
+#define PHP_YAF_VERSION 					"3.0.1-dev"
 
 #define YAF_STARTUP_FUNCTION(module)   	ZEND_MINIT_FUNCTION(yaf_##module)
 #define YAF_RINIT_FUNCTION(module)		ZEND_RINIT_FUNCTION(yaf_##module)
@@ -81,7 +81,7 @@ ZEND_BEGIN_MODULE_GLOBALS(yaf)
 	zend_string *default_action;
 	zend_string *bootstrap;
 	char         *global_library;
-    char         *environ;
+    char         *environ_name;
     char         *name_separator;
     size_t        name_separator_len;
 	zend_bool 	lowcase_path;
