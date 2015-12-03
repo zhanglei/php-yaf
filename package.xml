@@ -185,12 +185,16 @@
     <file name="076.phpt" role="test" />
     <file name="077.phpt" role="test" />
     <file name="078.phpt" role="test" />
+    <file name="079.phpt" role="test" />
     <file name="build.inc" role="test" />
     <file name="bug61493.phpt" role="test" />
     <file name="bug63381.phpt" role="test" />
     <file name="bug63438.phpt" role="test" />
     <file name="bug63900.phpt" role="test" />
     <file name="bug62702.phpt" role="test" />
+    <file name="bug70913.phpt" role="test" />
+    <file name="issue134.phpt" role="test" />
+    <file name="issue163.phpt" role="test" />
     <file name="simple.ini" role="test" />
     <file name="system.ini" role="test" />
     <file name="multi-section.ini" role="test" />
@@ -201,6 +205,7 @@
   <required> 
    <php> 
     <min>5.2.0</min> 
+    <max>5.6.99</max>
    </php> 
    <pearinstaller> 
     <min>1.4.0</min> 
